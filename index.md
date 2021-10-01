@@ -27,12 +27,12 @@ Left shift is the buzz word that's all the rage right now (usually in presos the
 Oversimplified example:
 1. At the developers desk $10
 2. At the build machine $100
-3. By colleagues in development build $1,000
-4. During QA $10,000
+3. After merge during development $1,000
+4. QA $10,000
 5. Customer $100,000
-6. Banner grabbing 0day $1,000,000
+6. Banner grabbing 0day $1,000,000+
 
-These numbers might sound crazy but 5 people spending 2 hours who make hundreds of dollars an hour is on the lower end by step 3. More often it's a dozen people independently refinding the bug, re-notifying the owner, and totally DOSed in the mean time. All annoyed and frustrated on top of it.
+These numbers might sound fantastical but 5 people spending 2 hours who make hundreds of dollars an hour is on the lower end by step 3. More often it's a dozen people independently refinding the bug, re-notifying the owner, and totally DOSed in the mean time. All annoyed and frustrated on top of it.
 
 Meanwhile, in a Github/Bitbucket workflow, this need not actually impose a lot of friction on the poor soul who just wants their code to merge. Take deep breaths. The reality is that the branch awaiting merge is sitting in Bitbucket for anyone else to pull/cherry-pick/rebase on top of locally as needed. Assuming the build works, the artifacts are available for use as well. There's really no downside to holding off that merge until it's ready. It's all upside to disrupt as few people as possible with broken code.
 
@@ -45,6 +45,64 @@ Having 4 or 5 or even 10 CICD build targets is a tractable problem. Building acr
 #### Con 4. FTFY
 Here again, the Makefiles can save you. Inspired by the V=1 flag, which enables verbose prints of the compiler command line, we have an I=0 flag. The function of I=0 is to disable -Werror. Why do that, you say? So that when you absentmindedly add an extra unused variable when you're dorking around locally you still get a build. So you make I=0 until just before pushing your branch to open the pull request. No frustrating nuisance warning errors.
 
+Consider the following:
+```
+ryan$ cat Makefile
+CC ?= gcc
+CPPFLAGS := $(if $(I),,-Werror) -Wextra -Wall
+
+test.o: test.c Makefile
+	$(CC) $(CPPFLAGS) test.c -o test.o
+
+test: test.o
+```
+```
+ryan$ cat test.c
+#include <stdio.h>
+
+int main(int argc, char** argv)
+{
+	int oh_noes_an_unused_variable;
+        printf("Hello World!\n");
+	return 0;
+}
+
+```
+
+I am developing, don't be annoying, compiler:
+```
+ryan$ make I=0
+cc  -Wextra -Wall test.c -o test.o
+test.c:5:6: warning: unused variable 'oh_noes_an_unused_variable' [-Wunused-variable]
+        int oh_noes_an_unused_variable;
+            ^
+test.c:3:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char** argv)
+             ^
+test.c:3:27: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char** argv)
+                          ^
+3 warnings generated.
+
+```
+
+I am ready to push my changes for merge, gimme all you got!
+```
+ryan$ make
+cc -Werror -Wextra -Wall test.c -o test.o
+test.c:5:6: error: unused variable 'oh_noes_an_unused_variable' [-Werror,-Wunused-variable]
+        int oh_noes_an_unused_variable;
+            ^
+test.c:3:14: error: unused parameter 'argc' [-Werror,-Wunused-parameter]
+int main(int argc, char** argv)
+             ^
+test.c:3:27: error: unused parameter 'argv' [-Werror,-Wunused-parameter]
+int main(int argc, char** argv)
+                          ^
+3 errors generated.
+make: *** [test.o] Error 1
+
+```
 
 ```markdown
 Syntax highlighted code block
