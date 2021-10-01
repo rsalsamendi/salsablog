@@ -3,7 +3,7 @@
 ## Not -Werror considered harmful 
 Fri Oct 1, 2021
 
-For the majority of my career in the private sector (think closed source), I've taken it for granted that -Wall -Weverything -Werror are always enabled. Projects I found have VC/gcc/clang/Coverity/clang scan-build on day 1, and pull requests to main need a clean build before merging. We also expect 75%+ (ideally 100%) code coverage from automated tests, which also run with the build. So it surprised me to learn that some (many?) folks in the open source and academic world hate -Werror with passion.
+For the majority of my career in the private sector (think closed source), I've taken it for granted that -Wall -Weverything -Werror are always enabled. Projects I found have VC/gcc/clang/Coverity/clang scan-build on day 1, and pull requests to main need a clean build before merging. We also expect 75%+ (ideally 100%) code coverage from automated tests, which also run with the build. So it surprised me to learn that some (many?) folks in the open source and academic world hate -Werror with passion. If we can solve the cons, I think the pros make it self evident -Werror is a good thing.
 
 Here are the Pros and Cons as I see them:
 
@@ -21,7 +21,7 @@ Here are the Pros and Cons as I see them:
 4. Iteratively developing and building locally with -Werror is super frustrating and unnecessarily time consuming
 
 ### What can we do about the cons?
-#### 1. Not a lot except to realize this is actually a Pro.
+#### Con 1. Not a lot except to realize this is actually a Pro.
 Left shift is the buzz word that's all the rage right now (usually in presos the following list is a graphic of boxes from left to right, hence left shift). When you consider the cost of a defect, a great first order approximation is that a bug found during each phase of software development costs about 10x the prior phase. This works with time as well, the further along the bug gets the more it costs and the more people it disrupts.
 
 Oversimplified example:
@@ -34,28 +34,21 @@ Oversimplified example:
 
 These numbers might sound crazy but 5 people spending 2 hours who make hundreds of dollars an hour is on the lower end by step 3. More often it's a dozen people independently refinding the bug, re-notifying the owner, and totally DOSed in the mean time. All annoyed and frustrated on top of it.
 
-Meanwhile, in a Github/Bitbucket workflow, this need not actually impose a lot of friction on the poor soul who just wants their code to merge. The reality is that branch is sitting in Bitbucket for anyone else to pull/cherry-pick/rebase on top of locally as needed. Assuming the build works, the artifacts are available for use as well. There's really no downside to holding off that merge until it's ready. It's all upside to disrupt as few people as possible with broken code.
+Meanwhile, in a Github/Bitbucket workflow, this need not actually impose a lot of friction on the poor soul who just wants their code to merge. Take deep breaths. The reality is that the branch awaiting merge is sitting in Bitbucket for anyone else to pull/cherry-pick/rebase on top of locally as needed. Assuming the build works, the artifacts are available for use as well. There's really no downside to holding off that merge until it's ready. It's all upside to disrupt as few people as possible with broken code.
 
-#### 2. 
+#### Con 2. Again, not a lot
+Gotta merge some time. Why should colleagues block on your not quite ready code? Merging conflicts always sucks and is always a problem.
 
-### Markdown
+#### Con 3. Lots!
+Having 4 or 5 or even 10 CICD build targets is a tractable problem. Building across current relaeases of all 3 major compilers from day 1 is tractable. Trying to build for every compiler and version is not. The solution is to check a Dockerfile into your project. If you want to get super fancy, and you know I do, have your Makefiles automatically pull and switch you into the build docker. No more struggling with dev environment setup. Install make and the docker client and you're moving.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+#### Con 4. FTFY
+Here again, the Makefiles can save you. Inspired by the V=1 flag, which enables verbose prints of the compiler command line, we have an I=0 flag. The function of I=0 is to disable -Werror. Why do that, you say? So that when you absentmindedly add an extra unused variable when you're dorking around locally you still get a build. So you make I=0 until just before pushing your branch to open the pull request. No frustrating nuisance warning errors.
+
 
 ```markdown
 Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
 
 [Link](url) and ![Image](src)
 ```
