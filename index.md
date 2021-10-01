@@ -1,8 +1,24 @@
-## Welcome to GitHub Pages
+## Not -Werror considered harmful 
+Fri Oct 1, 2021
 
-You can use the [editor on GitHub](https://github.com/rsalsamendi/salsablog/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+For the majority of my career in the private sector (think closed source), I've taken it for granted that -Wall -Weverything -Werror are always enabled. Projects I found have VC/gcc/clang/Coverity/clang scan-build on day 1, and pull requests to main need a clean build before merging. We also expect 75%+ (ideally 100%) code coverage from automated tests, which also run with the build. So it surprised me to learn that some (many?) folks in the open source and academic world hate -Werror with passion.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Here are the Pros and Cons as I see them:
+
+Pros:
+- The codebase is free of bugs that are so obvious a robot with a 1s timeout can find them.
+- We don't ship bugs that simply require a line of code to run to trigger
+- Devs level up, learn and get better
+- The code comes out much tighter. Dead code gets deleted.
+- The code is more portable across OS and compilers
+
+(Apparent) Cons:
+- Pull requests can take a significantly longer to merge, especially if they need multiple rounds with the builders
+- You may lose the merge race in fast moving codebases
+- Outsiders or new developers may struggle due to development environment differences
+- Iteratively developing and building locally with -Werror is super frustrating and unnecessarily time consuming
+
+
 
 ### Markdown
 
