@@ -119,7 +119,7 @@ FROM ubuntu:latest
 
 RUN apt-get update
 RUN apt-get install -y build-essential
-'''
+```
 
 Now create the docker image. This is a one time step that ensures everyone, including the build machine, is using an identical build environment. Typically after you create the docker, you push it to a repository so it can be shared with others, and the build machines. I leave the details of that exercise to the reader.
 ```
