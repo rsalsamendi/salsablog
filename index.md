@@ -25,8 +25,8 @@ Here are the Pros and Cons as I see them:
 ### (Apparent) Cons:
 1. Pull requests can take a significantly longer to merge, especially if they need multiple rounds with the builders
 2. You may lose the merge race in fast moving codebases
-3. Outsiders or new developers may struggle due to development environment differences
-4. Iteratively developing and building locally with -Werror is super frustrating and unnecessarily time consuming
+3. Iteratively developing and building locally with -Werror is super frustrating and unnecessarily time consuming
+4. Outsiders or new developers may struggle due to development environment differences
 
 ### What can we do about the cons?
 #### Con 1. Not a lot except to realize this is actually a Pro.
@@ -47,10 +47,7 @@ Meanwhile, in a Github/Bitbucket workflow, this need not actually impose a lot o
 #### Con 2. Again, not a lot
 Gotta merge some time. Why should colleagues block on your not quite ready code? Merging conflicts always sucks and is always a problem.
 
-#### Con 3. Lots!
-Having 4 or 5 or even 10 CICD build targets is a tractable problem. Building across current relaeases of all 3 major compilers from day 1 is tractable. Trying to build for every compiler and version is not. The solution is to check a Dockerfile into your project. If you want to get super fancy, and you know I do, have your Makefiles automatically pull and switch you into the build docker. No more struggling with dev environment setup. Install make and the docker client and you're moving.
-
-#### Con 4. FTFY
+#### Con 3. FTFY
 Here again, the Makefiles can save you. Inspired by the V=1 flag, which enables verbose prints of the compiler command line, we have an I=0 flag. The function of I=0 is to disable -Werror. Why do that, you say? So that when you absentmindedly add an extra unused variable when you're dorking around locally you still get a build. So you make I=0 until just before pushing your branch to open the pull request. No frustrating nuisance warning errors.
 
 Consider the following:
@@ -112,19 +109,6 @@ make: *** [test.o] Error 1
 
 ```
 
-```markdown
-Syntax highlighted code block
+#### Con 4. Lots!
+Having 4 or 5 or even 10 CICD build targets is a tractable problem. Building across current relaeases of all 3 major compilers from day 1 is tractable. Trying to build for every compiler and version is not. The solution is to check a Dockerfile into your project. If you want to get super fancy, and you know I do, have your Makefiles automatically pull and switch you into the build docker. No more struggling with dev environment setup. Install make and the docker client and you're moving.
 
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/rsalsamendi/salsablog/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
