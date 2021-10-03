@@ -1,9 +1,17 @@
 # Welcome to SalsaBlog
+This blog is full of strong opinions loosely held. Evidence supported feedback and criticism is welcome.
 
 ## Not -Werror considered harmful 
 Fri Oct 1, 2021
 
 For the majority of my career in the private sector (think closed source), I've taken it for granted that -Wall -Weverything -Werror are always enabled. Projects I found have VC/gcc/clang/Coverity/clang scan-build on day 1, and pull requests to main need a clean build before merging. We also expect 75%+ (ideally 100%) code coverage from automated tests, which also run with the build. So it surprised me to learn that some (many?) folks in the open source and academic world hate -Werror with passion. If we can solve the cons, I think the pros make it self evident -Werror is a good thing.
+
+A non-exhaustive list of other warnings we typically enable:
+- -Wtrampolines
+- -Wvla
+- -Wformat=2
+- -Wformat-security
+
 
 Here are the Pros and Cons as I see them:
 
