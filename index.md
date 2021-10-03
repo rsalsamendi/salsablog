@@ -117,6 +117,7 @@ First a simple Dockerfile. Use this as the input to create a docker image
 ToddPC:Werror ryan$ cat Dockerfile
 FROM ubuntu:latest
 
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get install -y build-essential gdb strace less vim
 ```
