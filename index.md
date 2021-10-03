@@ -48,7 +48,7 @@ Meanwhile, in a Github/Bitbucket workflow, this need not actually impose a lot o
 Gotta merge some time. Why should colleagues block on your not quite ready code? Merging conflicts always sucks and is always a problem.
 
 #### Con 3. FTFY
-Here again, the Makefiles can save you. Inspired by the V=1 flag, which enables verbose prints of the compiler command line, we have an I=0 flag. The function of I=0 is to disable -Werror. Why do that, you say? So that when you absentmindedly add an extra unused variable when you're dorking around locally you still get a build. So you make I=0 until just before pushing your branch to open the pull request. No frustrating nuisance warning errors.
+Here again, the Makefiles can save you. Inspired by the V=1 flag from the Linux Makefiles, which enables verbose prints of the compiler command line, we have an I=0 flag. The function of I=0 is to disable -Werror. Why do that, you say? So that when you absentmindedly add an extra unused variable when you're dorking around locally you still get a build. So you make I=0 until just before pushing your branch to open the pull request. No frustrating nuisance warning errors.
 
 Consider the following:
 ```
