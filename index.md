@@ -118,7 +118,7 @@ ToddPC:Werror ryan$ cat Dockerfile
 FROM ubuntu:latest
 
 RUN apt-get update
-RUN apt-get install -y build-essential less vim
+RUN apt-get install -y build-essential gdb strace less vim
 ```
 
 Now create the docker container image. This is done once at proect setup, and anytime a new build dependency is added. The docker container ensures everyone, including the build machine, is using an identical build environment. Typically after you create the docker, you push it to a repository so it can be shared with others, and the build machines. I leave the details of that exercise to the reader.
