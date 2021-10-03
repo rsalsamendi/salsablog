@@ -121,7 +121,7 @@ RUN apt-get update
 RUN apt-get install -y build-essential
 ```
 
-Now create the docker image. This is a one time step that ensures everyone, including the build machine, is using an identical build environment. Typically after you create the docker, you push it to a repository so it can be shared with others, and the build machines. I leave the details of that exercise to the reader.
+Now create the docker container image. This is done once at proect setup, and anytime a new build dependency is added. The docker container ensures everyone, including the build machine, is using an identical build environment. Typically after you create the docker, you push it to a repository so it can be shared with others, and the build machines. I leave the details of that exercise to the reader.
 ```
 ryan$ docker build -t devcontainer:1.0 -f ./Dockerfile .
 [+] Building 21.6s (7/7) FINISHED                                                                                                                                                                           
@@ -137,5 +137,59 @@ ryan$ docker build -t devcontainer:1.0 -f ./Dockerfile .
  => => exporting layers                                                                                                                                                                                2.1s 
  => => writing image sha256:fe8a1e58734c9f0e9b2f6f5ce6fb00ddc62c0e6ad10e36433c814804b0a148ba                                                                                                           0.0s 
  => => naming to docker.io/library/devcontainer:1.0                                                                                                                                                    0.0s 
- '''
+ ```
 
+Now we can build on our simple Makefile above to automatically pull any new container, if needed, and switch into the container before starting the build.
+```
+ryan$ cat Makefile
+ifeq ($(DOCKED), 1)
+all: test
+	@echo "Starting to build ..."
+
+CC ?= gcc
+CPPFLAGS := $(if $(I),,-Werror) -Wextra -Wall
+
+test.o: test.c Makefile
+	$(CC) $(CPPFLAGS) test.c -o test.o
+
+test: test.o
+	$(CC) test.o -o test
+
+else
+# Prepare to switch into the docker container
+
+VERSION := 1.0
+DOCKER_IMAGE := devcontainer:$(VERSION)
+
+# Share some sensible directories
+DOCKER_BIND_MOUNTS := -v $(HOME):$(HOME)
+DOCKER_BIND_MOUNTS += -v $(CURDIR):$(CURDIR)  -w $(CURDIR)
+DOCKER_BIND_MOUNTS += -v /etc/localtime:/etc/localtime
+
+# Pass through any important environment
+DOCKER_ENV := DOCKED=1
+
+ifneq ($(I),)
+DOCKER_ENV += -e I=$(I) 
+endif
+
+.NOTPARALLEL:
+.PHONY: all
+all:
+	@echo "Pulling the latest container..."
+	# docker pull repo:$(DOCKER_IMAGE)
+
+	# Switch into the docker, grant PTRACE so we an use strace and gdb in the contianer if needed
+	@echo "Switching into the docker..."
+	docker run --cap-add SYS_PTRACE --rm --log-driver=none --init $(DOCKER_BIND_MOUNTS) $(DOCKER_ENV) $(DOCKER_IMAGE) make $(MAKECMDGOALS)
+
+.PHONY: dock
+dock:
+	@echo "Pulling the latest container..."
+	# docker pull repo:$(DOCKER_IMAGE)
+
+	# Switch into the docker, grant PTRACE so we an use strace and gdb in the contianer if needed
+	@echo "Switching into the docker..."
+	docker run -it --cap-add SYS_PTRACE --rm --log-driver=none --init $(DOCKER_BIND_MOUNTS) $(DOCKER_ENV) $(DOCKER_IMAGE) /bin/bash
+endif
+```
