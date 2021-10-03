@@ -118,7 +118,7 @@ ToddPC:Werror ryan$ cat Dockerfile
 FROM ubuntu:latest
 
 RUN apt-get update
-RUN apt-get install -y build-essential
+RUN apt-get install -y build-essential less vim
 ```
 
 Now create the docker container image. This is done once at proect setup, and anytime a new build dependency is added. The docker container ensures everyone, including the build machine, is using an identical build environment. Typically after you create the docker, you push it to a repository so it can be shared with others, and the build machines. I leave the details of that exercise to the reader.
@@ -146,7 +146,7 @@ ifeq ($(DOCKED), 1)
 all: test
 	@echo "Starting to build ..."
 
-CC ?= gcc
+CC := gcc
 CPPFLAGS := $(if $(I),,-Werror) -Wextra -Wall
 
 test.o: test.c Makefile
@@ -157,20 +157,19 @@ test: test.o
 
 else
 # Prepare to switch into the docker container
-
 VERSION := 1.0
 DOCKER_IMAGE := devcontainer:$(VERSION)
 
 # Share some sensible directories
 DOCKER_BIND_MOUNTS := -v $(HOME):$(HOME)
-DOCKER_BIND_MOUNTS += -v $(CURDIR):$(CURDIR)  -w $(CURDIR)
+DOCKER_BIND_MOUNTS += -v $(CURDIR):$(CURDIR) -w $(CURDIR)
 DOCKER_BIND_MOUNTS += -v /etc/localtime:/etc/localtime
 
 # Pass through any important environment
-DOCKER_ENV := DOCKED=1
+DOCKER_ENV := -e DOCKED=1
 
 ifneq ($(I),)
-DOCKER_ENV += -e I=$(I) 
+DOCKER_ENV += -e I=$(I)
 endif
 
 .NOTPARALLEL:
