@@ -112,3 +112,30 @@ make: *** [test.o] Error 1
 #### Con 4. Lots!
 Having 4 or 5 or even 10 CICD build targets is a tractable problem. Building across current relaeases of all 3 major compilers from day 1 is tractable. Trying to build for every compiler and version is not. The solution is to check a Dockerfile into your project. If you want to get super fancy, and you know I do, have your Makefiles automatically pull and switch you into the build docker. No more struggling with dev environment setup. Install make and the docker client and you're moving.
 
+First a simple Dockerfile. Use this as the input to create a docker image
+```
+ToddPC:Werror ryan$ cat Dockerfile
+FROM ubuntu:latest
+
+RUN apt-get update
+RUN apt-get install -y build-essential
+'''
+
+Now create the docker image. This is a one time step that ensures everyone, including the build machine, is using an identical build environment. Typically after you create the docker, you push it to a repository so it can be shared with others, and the build machines. I leave the details of that exercise to the reader.
+```
+ryan$ docker build -t devcontainer:1.0 -f ./Dockerfile .
+[+] Building 21.6s (7/7) FINISHED                                                                                                                                                                           
+ => [internal] load build definition from Dockerfile                                                                                                                                                   0.0s
+ => => transferring dockerfile: 120B                                                                                                                                                                   0.0s
+ => [internal] load .dockerignore                                                                                                                                                                      0.0s
+ => => transferring context: 2B                                                                                                                                                                        0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                       0.5s
+ => [1/3] FROM docker.io/library/ubuntu:latest@sha256:44ab2c3b26363823dcb965498ab06abf74a1e6af20a732902250743df0d4172d                                                                                 0.0s
+ => CACHED [2/3] RUN apt-get update                                                                                                                                                                    0.0s
+ => [3/3] RUN apt-get install -y build-essential                                                                                                                                                      19.0s
+ => exporting to image                                                                                                                                                                                 2.1s 
+ => => exporting layers                                                                                                                                                                                2.1s 
+ => => writing image sha256:fe8a1e58734c9f0e9b2f6f5ce6fb00ddc62c0e6ad10e36433c814804b0a148ba                                                                                                           0.0s 
+ => => naming to docker.io/library/devcontainer:1.0                                                                                                                                                    0.0s 
+ '''
+
