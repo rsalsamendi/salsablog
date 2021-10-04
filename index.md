@@ -135,7 +135,7 @@ ryan$ docker build -t devcontainer:1.0 -f ./Dockerfile .
  => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                       0.5s
  => [1/3] FROM docker.io/library/ubuntu:latest@sha256:44ab2c3b26363823dcb965498ab06abf74a1e6af20a732902250743df0d4172d                                                                                 0.0s
  => CACHED [2/3] RUN apt-get update                                                                                                                                                                    0.0s
- => [3/3] RUN apt-get install -y build-essential                                                                                                                                                      19.0s
+ => [3/3] RUN apt-get install -y build-essential gdb strace less vim                                                                                                                                   19.0s
  => exporting to image                                                                                                                                                                                 2.1s 
  => => exporting layers                                                                                                                                                                                2.1s 
  => => writing image sha256:fe8a1e58734c9f0e9b2f6f5ce6fb00ddc62c0e6ad10e36433c814804b0a148ba                                                                                                           0.0s 
