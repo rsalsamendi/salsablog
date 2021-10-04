@@ -143,31 +143,34 @@ ryan$ docker build -t devcontainer:1.0 -f ./Dockerfile .
 Now we can build on our simple Makefile above to automatically pull any new container, if needed, and switch into the container before starting the build.
 ```
 ryan$ cat Makefile
+cat Makefile
 ifeq ($(DOCKED), 1)
-all: test
-	@echo "Starting to build ..."
 
 CC := gcc
 CPPFLAGS := $(if $(I),,-Werror) -Wextra -Wall
 
-test.o: test.c Makefile
-	$(CC) $(CPPFLAGS) test.c -o test.o
+all: test
+test.o: test.c | $(MAKEFILE_LIST)
+	$(CC) $(CPPFLAGS) -c $? -o $@
 
 test: test.o
-	$(CC) test.o -o test
+	$(CC) -o $@ $?
 
 else
 # Prepare to switch into the docker container
 VERSION := 1.0
 DOCKER_IMAGE := devcontainer:$(VERSION)
+DOCKER_ID := -u $(shell id -u):$(shell id -g)
 
 # Share some sensible directories
 DOCKER_BIND_MOUNTS := -v $(HOME):$(HOME)
 DOCKER_BIND_MOUNTS += -v $(CURDIR):$(CURDIR) -w $(CURDIR)
 DOCKER_BIND_MOUNTS += -v /etc/localtime:/etc/localtime
+DOCKER_BIND_MOUNTS += -v /etc/passwd:/etc/passwd
+DOCKER_BIND_MOUNTS += -v /etc/groups:/etc/groups
 
 # Pass through any important environment
-DOCKER_ENV := -e DOCKED=1
+DOCKER_ENV := -e DOCKED=1 -e USERNAME=$(shell whoami)
 
 ifneq ($(I),)
 DOCKER_ENV += -e I=$(I)
@@ -181,7 +184,7 @@ all:
 
 	# Switch into the docker, grant PTRACE so we an use strace and gdb in the contianer if needed
 	@echo "Switching into the docker..."
-	docker run --cap-add SYS_PTRACE --rm --log-driver=none --init $(DOCKER_BIND_MOUNTS) $(DOCKER_ENV) $(DOCKER_IMAGE) make $(MAKECMDGOALS)
+	docker run --cap-add SYS_PTRACE --rm --log-driver=none --init $(DOCKER_ID) $(DOCKER_BIND_MOUNTS) $(DOCKER_ENV) $(DOCKER_IMAGE) make $(MAKECMDGOALS)
 
 .PHONY: dock
 dock:
@@ -190,6 +193,6 @@ dock:
 
 	# Switch into the docker, grant PTRACE so we an use strace and gdb in the contianer if needed
 	@echo "Switching into the docker..."
-	docker run -it --cap-add SYS_PTRACE --rm --log-driver=none --init $(DOCKER_BIND_MOUNTS) $(DOCKER_ENV) $(DOCKER_IMAGE) /bin/bash
+	docker run -it --cap-add SYS_PTRACE --rm --log-driver=none --init $(DOCKER_ID) $(DOCKER_BIND_MOUNTS) $(DOCKER_ENV) $(DOCKER_IMAGE) /bin/bash
 endif
 ```
