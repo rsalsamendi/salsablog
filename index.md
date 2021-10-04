@@ -6,6 +6,8 @@ Fri Oct 1, 2021
 
 For the majority of my career in the private sector (think closed source), I've taken it for granted that -Wall -Weverything -Werror are always enabled. Projects I found have VC/gcc/clang/Coverity/clang scan-build on day 1, and pull requests to main need a clean build before merging. We also expect 75%+ (ideally 100%) code coverage from automated tests, which also run with the build. So it surprised me to learn that some (many?) folks in the open source and academic world hate -Werror with passion. If we can solve the cons, I think the pros make it self evident -Werror is a good thing.
 
+NB: The examples in this post are extremely simplified. There are about 1,000 tweaks we can do to make this environment more convenient, ie switching easily in and out of the container, make -j, etc.
+
 A non-exhaustive list of other warnings we typically enable:
 - -Wtrampolines
 - -Wvla
@@ -112,7 +114,7 @@ make: *** [test.o] Error 1
 #### Con 4. Lots!
 Having 4 or 5 or even 10 CICD build targets is a tractable problem. Building across current relaeases of all 3 major compilers from day 1 is tractable. Trying to build for every compiler and version is not. The solution is to check a Dockerfile into your project. If you want to get super fancy, and you know I do, have your Makefiles automatically pull and switch you into the build docker. No more struggling with dev environment setup. Install make and the docker client and you're moving.
 
-First a simple Dockerfile. Use this as the input to create a docker image
+First a simple Dockerfile. Use this as the input to create a docker image. Be sure to list all your build deps in the Dockerfile.
 ```
 ryan$ cat Dockerfile
 FROM ubuntu:latest
@@ -141,6 +143,8 @@ ryan$ docker build -t devcontainer:1.0 -f ./Dockerfile .
  ```
 
 Now we can build on our simple Makefile above to automatically pull any new container, if needed, and switch into the container before starting the build.
+
+NB: The docker pull step is commented because setting up a docker repo is out of scope for this post.
 ```
 ryan$ cat Makefile
 cat Makefile
