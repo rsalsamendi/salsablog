@@ -114,7 +114,7 @@ Having 4 or 5 or even 10 CICD build targets is a tractable problem. Building acr
 
 First a simple Dockerfile. Use this as the input to create a docker image
 ```
-ToddPC:Werror ryan$ cat Dockerfile
+ryan$ cat Dockerfile
 FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
