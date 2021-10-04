@@ -147,7 +147,6 @@ Now we can build on our simple Makefile above to automatically pull any new cont
 NB: The docker pull step is commented because setting up a docker repo is out of scope for this post.
 ```
 ryan$ cat Makefile
-cat Makefile
 ifeq ($(DOCKED), 1)
 
 CC := gcc
