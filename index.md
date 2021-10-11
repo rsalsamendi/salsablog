@@ -1,5 +1,22 @@
 # Welcome to SalsaBlog
-This blog is full of strong opinions loosely held. Evidence supported feedback and criticism is welcome.
+This blog is full of strong opinions loosely held. Evidence supported feedback and criticism is welcome. I'm the kind of crazy that obsesses over software quality, which is why I tend to try out and throw every tool in the book at my disassembler. This blog will document those adventures.
+
+## Code Coverage
+Mon Oct 11, 2021
+
+What is code coverage? It's a tool for tracking which lines of code are actually executed during the runtime of a program. In C, this includes how many times each line is hit. Generally, in C, it's presented as a percentage of lines excecuted / lines loaded into memory. Lines loaded into memory is an important distinction. The code coverage percentage can be deceptive because in large projects, some lines and files are ifdef'ed out, or excluded by the build system (therefore not loaded into memory). For many projects, these numbers will be identical or close, but for large projects with mulitple platforms, and architectures, the numbers may diverage dramatically.
+
+One neat trick you can use, when developing in a test driven / code coverage instrumented environment, is dead code elimination.
+
+Some folks track branch coverage, or class coverage but I think focusing on lines is the simplest/biggest bang for your buck. If you're shipping software of any appreciable size and complexity without measuring code coverage for your tests, you're flying blind. It's reckless. Don't do it. A change I hope to help bring in the world is to take software quality and security way more seriously. It's simply not possible to ship high quality secure software without code coverage.
+
+There are endless arguments over how high of a percentage is enough. The real answer, unfortunately, is that 100% is not enough. Let's break this down into necessary and sufficient. It's necessary to measure code coverage to ship high quality secure softwrae, but not sufficient. 
+
+Let's move to the real world where we don't think in absolutes. A lot of projects are anywhere from 0-40% coverage. Focus on getting that up. In my experience adding 
+
+
+
+What follows is a practical step by step example of how to measure code coverage in C.
 
 ## Not -Werror considered harmful 
 Fri Oct 1, 2021
