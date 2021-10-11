@@ -1,12 +1,17 @@
 # Welcome to SalsaBlog
 This blog is full of strong opinions loosely held. Evidence supported feedback and criticism is welcome. I'm the kind of crazy that obsesses over software quality, which is why I tend to try out and throw every tool in the book at my disassembler. This blog will document those adventures.
 
+
 ## Code Coverage
 Mon Oct 11, 2021
 
+My thesis for writing the highest possible quality code in C goes like this. Give me an automated, repeatable, high code coverage test suite on a warning clean, binary hardened code base (with modern compilers). Make it clean under instrumentation like ASAN/UBSAN/TSAN/Valgrind. Ideally spend some time fuzzing and/or with tools like Klee, and you will produce pretty darn near space shuttle level quality code. Put these things in CICD and don't light up the merge button until they're there. There are other things I may get into later, like cyclomatic complexity, minimizing runtime use of the heap (setup/teardown is pretty unavoidable in C). But these are the basics.
+
+Some people argue that, under deadline and schedule pressure, that they don't have time to do these things. My real world experiences argues that you don't have time not to. If you do these things from the beginning, they're much easier. Adding them to an existing codebase is a huge exercise in triage, and divide and conquer.
+
 What is code coverage? It's a tool for tracking which lines of code are actually executed during the runtime of a program. In C, this includes how many times each line is hit. Generally, in C, it's presented as a percentage of lines excecuted / lines loaded into memory. Lines loaded into memory is an important distinction. The code coverage percentage can be deceptive because in large projects, some lines and files are ifdef'ed out, or excluded by the build system (therefore not loaded into memory). For many projects, these numbers will be identical or close, but for large projects with mulitple platforms, and architectures, the numbers may diverage dramatically.
 
-One neat trick you can use, when developing in a test driven / code coverage instrumented environment, is dead code elimination.
+One neat trick you can use, when developing in a test driven / code coverage instrumented environment, is dead code elimination. There's no hard, fast rule here, but if you can't get code to light up with thorough testing, it might be a good candidate for deletion. Every line you delete makes your project easier to understand, faster, more memory efficient, and easier to debug.
 
 Some folks track branch coverage, or class coverage but I think focusing on lines is the simplest/biggest bang for your buck. If you're shipping software of any appreciable size and complexity without measuring code coverage for your tests, you're flying blind. It's reckless. Don't do it. A change I hope to help bring in the world is to take software quality and security way more seriously. It's simply not possible to ship high quality secure software without code coverage.
 
